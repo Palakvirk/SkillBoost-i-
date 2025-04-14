@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillBoost - Personalized Training Platform</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Include React and ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  
+  <!-- Include Babel for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Include TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Include additional JavaScript libraries -->
+  <script src="https://unpkg.com/lucide-icons-react@0.256.0/dist/lucide-icons-react.min.js"></script>
+  
+  <style>
+    /* Base styles */
+    :root {
+      /* Base colors */
+      --bg-color: #f8fafc;
+      --text-color: #1e293b;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      
+      /* Pastel colors */
+      --pastel-pink: #f8b4d9;
+      --pastel-purple: #d6bcfa;
+      --pastel-blue: #90cdf4;
+      --pastel-green: #9ae6b4;
+      --pastel-yellow: #fbd38d;
+      
+      /* Gradient definitions */
+      --gradient-primary: linear-gradient(to right, var(--pastel-blue), var(--pastel-purple));
+      --gradient-secondary: linear-gradient(to right, var(--pastel-pink), var(--pastel-purple));
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Custom reusable components */
+    .card {
+      background-color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .btn-outline:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .btn-secondary {
+      background: var(--gradient-secondary);
+      color: white;
+      border: none;
+    }
+    
+    .btn-secondary:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Progress bar */
+    .progress-bar {
+      height: 0.5rem;
+      background-color: #e2e8f0;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    
+    .progress-value {
+      height: 100%;
+      background: var(--gradient-primary);
+      border-radius: 9999px;
+    }
+    
+    /* Category badges */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: white;
+    }
+    
+    .category-data-analysis { background-color: var(--pastel-green); }
+    .category-leadership { background-color: var(--pastel-pink); }
+    .category-project-management { background-color: var(--pastel-blue); }
+    .category-communication { background-color: var(--pastel-purple); }
+    .category-technical { background-color: var(--pastel-yellow); }
+    
+    /* App Layout */
+    .app-container {
+      min-height: 100vh;
+      display: flex;
+    }
+    
+    .sidebar {
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background-color: white;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      z-index: 10;
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+    }
+    
+    .sidebar-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--gradient-secondary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .sidebar-nav {
+      padding: 1rem;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      color: var(--text-color);
+      transition: background-color 0.2s;
+    }
+    
+    .nav-item:hover, .nav-item.active {
+      background-color: rgba(144, 205, 244, 0.1);
+      color: var(--pastel-blue);
+    }
+    
+    .nav-icon {
+      margin-right: 0.75rem;
+    }
+    
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+    }
+    
+    .header {
+      height: 4rem;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .content {
+      padding: 1.5rem;
+    }
+    
+    /* Course Cards */
+    .course-card {
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .course-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .course-header {
+      height: 12rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    
+    .course-header h3 {
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .course-content {
+      padding: 1.25rem;
+    }
+    
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .modal-container {
+      background-color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 48rem;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: scaleIn 0.3s ease;
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+    
+    /* Auth modals */
+    .auth-container {
+      max-width: 30rem;
+    }
+    
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .auth-tab.active {
+      color: var(--pastel-purple);
+      border-bottom: 2px solid var(--pastel-purple);
+    }
+    
+    .auth-form {
+      padding: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      transition: border-color 0.2s;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--pastel-purple);
+    }
+    
+    .form-error {
+      color: #e53e3e;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    
+    /* Dashboard Cards */
+    .stat-card {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      border: none;
+    }
+    
+    .stat-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+    }
+    
+    .stat-info p:first-child {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-info p:last-child {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    /* Skills Analysis */
+    .skills-container {
+      margin-bottom: 1.5rem;
+    }
+    
+    .skill-item {
+      margin-bottom: 1.5rem;
+    }
+    
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    
+    .skill-name {
+      font-weight: 500;
+    }
+    
+    .skill-value {
+      font-weight: 500;
+    }
+    
+    .skill-bar {
+      height: 1rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    
+    /* Media queries for responsiveness */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .menu-button {
+        display: block;
+      }
+    }
+    
+    /* Animation classes */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .slide-up {
+      animation: slideUp 0.5s ease-out;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .scale-in {
+      animation: scaleIn 0.3s ease-out;
+    }
+    
+    /* Toast notification */
+    .toast-container {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 100;
+    }
+    
+    .toast {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      max-width: 24rem;
+      animation: slideUp 0.3s ease-out;
+    }
+    
+    .toast-success {
+      background-color: var(--pastel-green);
+      color: white;
+    }
+    
+    .toast-error {
+      background-color: #fecaca;
+      color: #b91c1c;
+    }
+    
+    .toast-icon {
+      margin-right: 0.75rem;
+    }
+    
+    .toast-close {
+      margin-left: auto;
+      cursor: pointer;
+    }
+  </style>
+  
+  <script>
+    // Configure Tailwind
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pastelPink: '#f8b4d9',
+            pastelPurple: '#d6bcfa',
+            pastelBlue: '#90cdf4',
+            pastelGreen: '#9ae6b4',
+            pastelYellow: '#fbd38d',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    // Mock data for demonstration purposes
+    const mockUser = {
+      id: 1,
+      name: "Alex Morgan",
+      email: "alex@example.com",
+      role: "manager",
+      skills: {
+        leadership: 75,
+        data_analysis: 45,
+        project_management: 60,
+        communication: 80,
+        technical: 50
+      }
+    };
+    
+    const mockCourses = [
+      {
+        id: 1,
+        title: "Data Analysis Fundamentals",
+        description: "Learn the essential skills of data analysis, including statistical methods and visualization techniques.",
+        category: "Data Analysis",
+        instructor: "Dr. Sarah Johnson",
+        duration: 120,
+        progress: 0,
+        modules: [
+          { title: "Introduction to Data Analysis", duration: 20 },
+          { title: "Statistical Methods", duration: 40 },
+          { title: "Data Visualization", duration: 30 },
+          { title: "Analysis Tools and Software", duration: 30 }
+        ],
+        skillsGained: ["Statistical analysis", "Data visualization", "Critical thinking"]
+      },
+      {
+        id: 2,
+        title: "Leadership Essentials",
+        description: "Develop key leadership skills needed to inspire and guide teams to success.",
+        category: "Leadership",
+        instructor: "Michael Chen",
+        duration: 180,
+        progress: 45,
+        modules: [
+          { title: "Understanding Leadership Styles", duration: 45 },
+          { title: "Effective Communication", duration: 45 },
+          { title: "Team Building", duration: 45 },
+          { title: "Conflict Resolution", duration: 45 }
+        ],
+        skillsGained: ["Team management", "Effective communication", "Conflict resolution"]
+      },
+      {
+        id: 3,
+        title: "Project Management Fundamentals",
+        description: "Learn the core principles of project management including planning, execution, and closure.",
+        category: "Project Management",
+        instructor: "Jessica Alvarez",
+        duration: 150,
+        progress: 0,
+        modules: [
+          { title: "Project Initiation", duration: 30 },
+          { title: "Project Planning", duration: 40 },
+          { title: "Project Execution", duration: 40 },
+          { title: "Project Monitoring", duration: 20 },
+          { title: "Project Closure", duration: 20 }
+        ],
+        skillsGained: ["Project planning", "Risk management", "Resource allocation"]
+      },
+      {
+        id: 4,
+        title: "Communication Skills for Professionals",
+        description: "Enhance your ability to communicate effectively in any professional environment.",
+        category: "Communication",
+        instructor: "Dr. Robert Martinez",
+        duration: 90,
+        progress: 100,
+        modules: [
+          { title: "Verbal Communication", duration: 30 },
+          { title: "Non-verbal Communication", duration: 20 },
+          { title: "Written Communication", duration: 20 },
+          { title: "Active Listening", duration: 20 }
+        ],
+        skillsGained: ["Clear articulation", "Active listening", "Persuasive writing"]
+      },
+      {
+        id: 5,
+        title: "Technical Writing",
+        description: "Learn how to create clear, concise technical documentation for various audiences.",
+        category: "Technical",
+        instructor: "Emma Wilson",
+        duration: 120,
+        progress: 0,
+        modules: [
+          { title: "Principles of Technical Writing", duration: 30 },
+          { title: "Audience Analysis", duration: 20 },
+          { title: "Document Structure", duration: 30 },
+          { title: "Clarity and Conciseness", duration: 20 },
+          { title: "Review and Revision", duration: 20 }
+        ],
+        skillsGained: ["Technical documentation", "Clarity in writing", "Information organization"]
+      }
+    ];
+    
+    const mockTrainingHistory = [
+      {
+        id: 1,
+        courseId: 4,
+        completedAt: "2023-05-15T10:30:00Z",
+        certification: "COMM-2023-154",
+        course: mockCourses.find(course => course.id === 4)
+      }
+    ];
+    
+    // Mock user database for auth
+    let users = [
+      {
+        id: 1,
+        name: "Alex Morgan",
+        email: "alex@example.com",
+        password: "password123", // In a real app, this would be hashed
+        role: "manager"
+      }
+    ];
+    
+    // Icon Components using SVG for simplicity
+    const HomeIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    );
+    
+    const BookOpenIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+      </svg>
+    );
+    
+    const GraduationCapIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+      </svg>
+    );
+    
+    const UserIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    );
+    
+    const LogoutIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+    );
+    
+    const LoginIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+        <polyline points="10 17 15 12 10 7"></polyline>
+        <line x1="15" y1="12" x2="3" y2="12"></line>
+      </svg>
+    );
+    
+    const CheckIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    );
+    
+    const ClockIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    );
+    
+    const MenuIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    );
+    
+    const XIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    );
+    
+    // Context for global authentication state
+    const AuthContext = React.createContext(null);
+    
+    const AuthProvider = ({ children }) => {
+      const [currentUser, setCurrentUser] = React.useState(null);
+      const [isLoading, setIsLoading] = React.useState(true);
+      
+      // Check if user is logged in on mount (simulating loading user from storage)
+      React.useEffect(() => {
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+          try {
+            setCurrentUser(JSON.parse(storedUser));
+          } catch (e) {
+            console.error("Failed to parse user data:", e);
+            localStorage.removeItem('currentUser');
+          }
+        }
+        setIsLoading(false);
+      }, []);
+      
+      // Login function
+      const login = async (email, password) => {
+        // Simulate API call
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+              // Create a copy without password for security
+              const { password, ...userWithoutPassword } = user;
+              setCurrentUser(userWithoutPassword);
+              localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+              resolve(userWithoutPassword);
+            } else {
+              reject(new Error("Invalid email or password"));
+            }
+          }, 500);
+        });
+      };
+      
+      // Register function
+      const register = async (name, email, password) => {
+        // Simulate API call
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            // Check if user already exists
+            if (users.some(u => u.email === email)) {
+              reject(new Error("Email already in use"));
+              return;
+            }
+            
+            // Create new user
+            const newUser = {
+              id: users.length + 1,
+              name,
+              email,
+              password,
+              role: "user"
+            };
+            
+            // Add to mock database
+            users.push(newUser);
+            
+            // Create copy without password
+            const { password: _, ...userWithoutPassword } = newUser;
+            
+            // Update state and localStorage
+            setCurrentUser(userWithoutPassword);
+            localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+            resolve(userWithoutPassword);
+          }, 500);
+        });
+      };
+      
+      // Logout function
+      const logout = () => {
+        setCurrentUser(null);
+        localStorage.removeItem('currentUser');
+      };
+      
+      const value = {
+        currentUser,
+        isLoading,
+        login,
+        register,
+        logout
+      };
+      
+      return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    };
+    
+    // Custom Hook for using auth context
+    const useAuth = () => {
+      const context = React.useContext(AuthContext);
+      if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+      }
+      return context;
+    };
+    
+    // Toast Context for notifications
+    const ToastContext = React.createContext(null);
+    
+    const ToastProvider = ({ children }) => {
+      const [toasts, setToasts] = React.useState([]);
+      
+      const addToast = (type, message) => {
+        const id = Date.now();
+        setToasts(prev => [...prev, { id, type, message }]);
+        
+        // Auto-remove toast after 5 seconds
+        setTimeout(() => {
+          removeToast(id);
+        }, 5000);
+      };
+      
+      const removeToast = (id) => {
+        setToasts(prev => prev.filter(toast => toast.id !== id));
+      };
+      
+      const value = {
+        toasts,
+        addToast,
+        removeToast
+      };
+      
+      return (
+        <ToastContext.Provider value={value}>
+          {children}
+          <div className="toast-container">
+            {toasts.map(toast => (
+              <div 
+                key={toast.id} 
+                className={`toast ${toast.type === 'success' ? 'toast-success' : 'toast-error'}`}
+              >
+                {toast.type === 'success' ? (
+                  <CheckIcon className="toast-icon" />
+                ) : (
+                  <XIcon className="toast-icon" />
+                )}
+                <div>{toast.message}</div>
+                <div className="toast-close" onClick={() => removeToast(toast.id)}>
+                  <XIcon />
+                </div>
+              </div>
+            ))}
+          </div>
+        </ToastContext.Provider>
+      );
+    };
+    
+    const useToast = () => {
+      const context = React.useContext(ToastContext);
+      if (!context) {
+        throw new Error("useToast must be used within a ToastProvider");
+      }
+      return context;
+    };
+    
+    // Custom Hook for mobile detection
+    const useIsMobile = () => {
+      const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+      
+      React.useEffect(() => {
+        const handleResize = () => {
+          setIsMobile(window.innerWidth < 768);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      }, []);
+      
+      return isMobile;
+    };
+    
+    // Authentication Modal Component
+    const AuthModal = ({ isOpen, onClose }) => {
+      const [activeTab, setActiveTab] = React.useState('login');
+      const [formData, setFormData] = React.useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      });
+      const [errors, setErrors] = React.useState({});
+      const [isSubmitting, setIsSubmitting] = React.useState(false);
+      
+      const { login, register } = useAuth();
+      const { addToast } = useToast();
+      
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        
+        // Clear error when field changes
+        if (errors[name]) {
+          setErrors(prev => ({ ...prev, [name]: null }));
+        }
+      };
+      
+      const validateForm = () => {
+        const newErrors = {};
+        
+        // Email validation
+        if (!formData.email) {
+          newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+          newErrors.email = 'Email is invalid';
+        }
+        
+        // Password validation
+        if (!formData.password) {
+          newErrors.password = 'Password is required';
+        } else if (formData.password.length < 6) {
+          newErrors.password = 'Password must be at least 6 characters';
+        }
+        
+        // Additional validations for registration
+        if (activeTab === 'register') {
+          if (!formData.name) {
+            newErrors.name = 'Name is required';
+          }
+          
+          if (!formData.confirmPassword) {
+            newErrors.confirmPassword = 'Please confirm your password';
+          } else if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match';
+          }
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+      };
+      
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!validateForm()) {
+          return;
+        }
+        
+        setIsSubmitting(true);
+        
+        try {
+          if (activeTab === 'login') {
+            await login(formData.email, formData.password);
+            addToast('success', 'Login successful!');
+          } else {
+            await register(formData.name, formData.email, formData.password);
+            addToast('success', 'Registration successful!');
+          }
+          onClose();
+        } catch (error) {
+          setErrors({ form: error.message });
+          addToast('error', error.message);
+        } finally {
+          setIsSubmitting(false);
+        }
+      };
+      
+      if (!isOpen) return null;
+      
+      return (
+        <div className="modal-overlay">
+          <div className="modal-container auth-container">
+            <div className="auth-tabs">
+              <div 
+                className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
+                onClick={() => setActiveTab('login')}
+              >
+                Login
+              </div>
+              <div 
+                className={`auth-tab ${activeTab === 'register' ? 'active' : ''}`}
+                onClick={() => setActiveTab('register')}
+              >
+                Register
+              </div>
+            </div>
+            
+            <form className="auth-form" onSubmit={handleSubmit}>
+              {errors.form && (
+                <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-md">
+                  {errors.form}
+                </div>
+              )}
+              
+              {activeTab === 'register' && (
+                <div className="form-group">
+                  <label className="form-label" htmlFor="name">Name</label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    className="form-input"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
+                  {errors.name && <div className="form-error">{errors.name}</div>}
+                </div>
+              )}
+              
+              <div className="form-group">
+                <label className="form-label" htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  className="form-input"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {errors.email && <div className="form-error">{errors.email}</div>}
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label" htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="form-input"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                {errors.password && <div className="form-error">{errors.password}</div>}
+              </div>
+              
+              {activeTab === 'register' && (
+                <div className="form-group">
+                  <label className="form-label" htmlFor="confirmPassword">Confirm Password</label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    className="form-input"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                  />
+                  {errors.confirmPassword && <div className="form-error">{errors.confirmPassword}</div>}
+                </div>
+              )}
+              
+              <button 
+                type="submit" 
+                className="btn btn-primary w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Please wait...' : (activeTab === 'login' ? 'Login' : 'Register')}
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    };
+    
+    // CourseCard Component
+    const CourseCard = ({ course, onOpenModal }) => {
+      const getCategoryColor = (category) => {
+        switch (category) {
+          case 'Data Analysis': return 'category-data-analysis';
+          case 'Leadership': return 'category-leadership';
+          case 'Project Management': return 'category-project-management';
+          case 'Communication': return 'category-communication';
+          case 'Technical': return 'category-technical';
+          default: return '';
+        }
+      };
+      
+      const handleClick = () => {
+        onOpenModal(course.id);
+      };
+      
+      const handleDismiss = (e) => {
+        e.stopPropagation();
+        // In a real app, this would call an API to dismiss the course
+        alert(`Course "${course.title}" dismissed`);
+      };
+      
+      return (
+        <div className="course-card card" onClick={handleClick}>
+          <div className={`course-header ${getCategoryColor(course.category)}`}>
+            <h3>{course.title}</h3>
+          </div>
+          
+          <div className="course-content">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-sm font-medium text-gray-600">{course.category}</span>
+              <span className="text-sm text-gray-500">{course.duration} min</span>
+            </div>
+            
+            <p className="text-sm text-gray-500 mb-2">Instructor: {course.instructor}</p>
+            
+            <div className="mb-4">
+              <div className="progress-bar">
+                <div className="progress-value" style={{ width: `${course.progress || 0}%` }}></div>
+              </div>
+              <div className="flex justify-between mt-1">
+                <span className="text-xs text-gray-500">Progress</span>
+                <span className="text-xs text-gray-500">{course.progress || 0}%</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-between">
+              <button className="btn btn-primary">
+                {course.progress > 0 ? 'Resume' : 'Start'}
+              </button>
+              
+              <button 
+                className="btn btn-outline"
+                onClick={handleDismiss}
+              >
+                Not Interested
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // CourseDetailModal Component
+    const CourseDetailModal = ({ isOpen, onClose, courseId }) => {
+      if (!isOpen) return null;
+      
+      const course = mockCourses.find(c => c.id === courseId);
+      
+      if (!course) return null;
+      
+      const handleEnroll = () => {
+        // In a real app, this would call an API to enroll in the course
+        alert(`Enrolled in "${course.title}"`);
+        onClose();
+      };
+      
+      return (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="modal-header">
+              <h2 className="modal-title">{course.title}</h2>
+            </div>
+            
+            <div className="modal-body">
+              <div className="mb-4 flex items-center gap-4">
+                <span className={`badge ${course.category === 'Data Analysis' ? 'category-data-analysis' : 
+                course.category === 'Leadership' ? 'category-leadership' : 
+                course.category === 'Project Management' ? 'category-project-management' : 
+                course.category === 'Communication' ? 'category-communication' : 
+                'category-technical'}`}>
+                  {course.category}
+                </span>
+                <span className="text-sm text-gray-500">{course.duration} min</span>
+                <span className="text-sm text-gray-500">Instructor: {course.instructor}</span>
+              </div>
+              
+              <p className="text-gray-700 mb-6">{course.description}</p>
+              
+              <div className="mb-6">
+                <h3 className="font-bold mb-2">Modules</h3>
+                <div className="space-y-2">
+                  {course.modules.map((module, index) => (
+                    <div key={index} className="border rounded-lg p-3 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white ${course.category === 'Data Analysis' ? 'category-data-analysis' : 
+                        course.category === 'Leadership' ? 'category-leadership' : 
+                        course.category === 'Project Management' ? 'category-project-management' : 
+                        course.category === 'Communication' ? 'category-communication' : 
+                        'category-technical'}`}>
+                          {index + 1}
+                        </div>
+                        <span>{module.title}</span>
+                      </div>
+                      <span className="text-sm text-gray-500">{module.duration} min</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <h3 className="font-bold mb-2">Skills You'll Gain</h3>
+                <div className="flex flex-wrap gap-2">
+                  {course.skillsGained.map((skill, index) => (
+                    <span key={index} className={`badge ${course.category === 'Data Analysis' ? 'category-data-analysis' : 
+                    course.category === 'Leadership' ? 'category-leadership' : 
+                    course.category === 'Project Management' ? 'category-project-management' : 
+                    course.category === 'Communication' ? 'category-communication' : 
+                    'category-technical'}`}>
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={onClose}>
+                Close
+              </button>
+              <button className="btn btn-primary" onClick={handleEnroll}>
+                Enroll Now
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // RecommendationSection Component
+    const RecommendationSection = () => {
+      const [sortOption, setSortOption] = React.useState("relevance");
+      const [selectedCourseId, setSelectedCourseId] = React.useState(null);
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
+      
+      // Filter out completed courses
+      const availableCourses = mockCourses.filter(course => course.progress < 100);
+      
+      const handleOpenModal = (courseId) => {
+        setSelectedCourseId(courseId);
+        setIsModalOpen(true);
+      };
+      
+      const handleCloseModal = () => {
+        setIsModalOpen(false);
+      };
+      
+      return (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold">Recommended for You</h2>
+            
+            <div className="relative">
+              <select 
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 appearance-none bg-white"
+              >
+                <option value="relevance">Most Relevant</option>
+                <option value="newest">Newest First</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {availableCourses.map((course) => (
+              <CourseCard 
+                key={course.id} 
+                course={course} 
+                onOpenModal={handleOpenModal} 
+              />
+            ))}
+          </div>
+          
+          <CourseDetailModal 
+            isOpen={isModalOpen} 
+            onClose={handleCloseModal} 
+            courseId={selectedCourseId} 
+          />
+        </div>
+      );
+    };
+    
+    // UserProgressSummary Component
+    const UserProgressSummary = () => {
+      const completedCount = mockTrainingHistory.length;
+      const inProgressCount = mockCourses.filter(course => course.progress > 0 && course.progress < 100).length;
+      const totalCourses = mockCourses.length;
+      
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="card stat-card bg-gradient-to-br from-green-50 to-green-100">
+            <div className="stat-icon bg-[#9ae6b4]">
+              <CheckIcon />
+            </div>
+            <div className="stat-info">
+              <p>Completed</p>
+              <p>{completedCount}</p>
+            </div>
+          </div>
+          
+          <div className="card stat-card bg-gradient-to-br from-pink-50 to-pink-100">
+            <div className="stat-icon bg-[#f8b4d9]">
+              <ClockIcon />
+            </div>
+            <div className="stat-info">
+              <p>In Progress</p>
+              <p>{inProgressCount}</p>
+            </div>
+          </div>
+          
+          <div className="card stat-card bg-gradient-to-br from-blue-50 to-blue-100">
+            <div className="stat-icon bg-[#90cdf4]">
+              <BookOpenIcon />
+            </div>
+            <div className="stat-info">
+              <p>Total Courses</p>
+              <p>{totalCourses}</p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // SkillsGapAnalysis Component
+    const SkillsGapAnalysis = () => {
+      const skills = mockUser.skills;
+      
+      // Add colors to each skill
+      const skillsWithColors = [
+        { name: "Leadership", value: skills.leadership, color: "#f8b4d9" },
+        { name: "Data Analysis", value: skills.data_analysis, color: "#9ae6b4" },
+        { name: "Project Management", value: skills.project_management, color: "#90cdf4" },
+        { name: "Communication", value: skills.communication, color: "#d6bcfa" },
+        { name: "Technical", value: skills.technical, color: "#fbd38d" }
+      ];
+      
+      // Sort skills by value (ascending) to highlight skills gaps
+      const sortedSkills = [...skillsWithColors].sort((a, b) => a.value - b.value);
+      
+      return (
+        <div className="card p-6 mb-8">
+          <h2 className="text-xl font-bold mb-6">Skills Analysis</h2>
+          
+          <div className="skills-container">
+            {sortedSkills.map((skill) => (
+              <div key={skill.name} className="skill-item">
+                <div className="skill-header">
+                  <span className="skill-name">{skill.name}</span>
+                  <span className="skill-value">{skill.value}%</span>
+                </div>
+                <div className="skill-bar">
+                  <div 
+                    className="skill-bar-fill" 
+                    style={{ 
+                      width: `${skill.value}%`,
+                      height: "100%",
+                      backgroundColor: skill.color
+                    }}
+                  ></div>
+                </div>
+                {skill.value < 50 && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    This is an area for improvement. Consider taking courses to strengthen this skill.
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+    
+    // TrainingHistoryTable Component
+    const TrainingHistoryTable = () => {
+      return (
+        <div className="card overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-xl font-bold mb-6">Training History</h2>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certification</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {mockTrainingHistory.length > 0 ? (
+                  mockTrainingHistory.map((item) => (
+                    <tr key={item.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.course.title}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.course.category}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(item.completedAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.certification ? (
+                          <span className="badge category-data-analysis">
+                            {item.certification}
+                          </span>
+                        ) : (
+                          "No certification"
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">
+                      No training history found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+    
+    // Dashboard Component
+    const Dashboard = () => {
+      const { currentUser } = useAuth();
+      const userName = currentUser?.name || "Guest";
+      
+      return (
+        <div className="container mx-auto">
+          <div className="card p-6 mb-8">
+            <div className="flex items-center mb-6">
+              <div className="mr-4">
+                <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[#f8b4d9] to-[#d6bcfa] flex items-center justify-center text-white font-bold">
+                  {userName.split(' ').map(n => n[0]).join('')}
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold mb-1">
+                  Welcome, {userName}
+                </h1>
+                <p className="text-gray-600">
+                  Here are your personalized training recommendations
+                </p>
+              </div>
+            </div>
+            
+            <UserProgressSummary />
+            
+            <RecommendationSection />
+          </div>
+        </div>
+      );
+    };
+    
+    // Profile Component
+    const Profile = () => {
+      const [activeTab, setActiveTab] = React.useState("skills");
+      const { currentUser } = useAuth();
+      
+      return (
+        <div className="container mx-auto">
+          <div className="card mb-8">
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                <div>
+                  <div className="h-32 w-32 rounded-full bg-gradient-to-r from-[#f8b4d9] to-[#d6bcfa] flex items-center justify-center text-white text-3xl font-bold">
+                    {currentUser?.name.split(' ').map(n => n[0]).join('') || 'G'}
+                  </div>
+                </div>
+                
+                <div className="flex-1 text-center md:text-left">
+                  <h1 className="text-2xl font-bold">{currentUser?.name || 'Guest'}</h1>
+                  <p className="text-gray-500 mb-2">{currentUser?.email || 'guest@example.com'}</p>
+                  <span className="badge category-leadership mb-4">
+                    {currentUser?.role ? (currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)) : 'Guest'}
+                  </span>
+                  
+                  <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
+                    <button className="btn btn-outline text-[#d6bcfa] border-[#d6bcfa] hover:bg-[#d6bcfa] hover:text-white">
+                      Edit Profile
+                    </button>
+                    <button className="btn btn-primary">
+                      View Certificates
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            <div className="border-b">
+              <div className="flex">
+                <button 
+                  className={`py-2 px-4 font-medium ${activeTab === 'skills' ? 'border-b-2 border-[#d6bcfa] text-[#d6bcfa]' : 'text-gray-500'}`}
+                  onClick={() => setActiveTab('skills')}
+                >
+                  Skills & Competencies
+                </button>
+                <button 
+                  className={`py-2 px-4 font-medium ${activeTab === 'history' ? 'border-b-2 border-[#d6bcfa] text-[#d6bcfa]' : 'text-gray-500'}`}
+                  onClick={() => setActiveTab('history')}
+                >
+                  Training History
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {activeTab === 'skills' ? (
+            <>
+              <SkillsGapAnalysis />
+              
+              <div className="card p-6 mb-8">
+                <h2 className="text-xl font-bold mb-6">Recommended Skill Development</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border rounded-lg p-4">
+                    <h3 className="font-bold text-[#9ae6b4] mb-2">Data Analysis</h3>
+                    <p className="text-gray-700 mb-4">Based on your current skill level, we recommend focusing on improving your data analysis skills.</p>
+                    <button className="btn btn-outline text-[#9ae6b4] border-[#9ae6b4] hover:bg-[#9ae6b4] hover:text-white">
+                      View Courses
+                    </button>
+                  </div>
+                  
+                  <div className="border rounded-lg p-4">
+                    <h3 className="font-bold text-[#f8b4d9] mb-2">Project Management</h3>
+                    <p className="text-gray-700 mb-4">Improving your project management skills can help you advance in your current role.</p>
+                    <button className="btn btn-outline text-[#f8b4d9] border-[#f8b4d9] hover:bg-[#f8b4d9] hover:text-white">
+                      View Courses
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <TrainingHistoryTable />
+          )}
+        </div>
+      );
+    };
+    
+    // Courses Component
+    const Courses = () => {
+      const [selectedCourseId, setSelectedCourseId] = React.useState(null);
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
+      
+      const handleOpenModal = (courseId) => {
+        setSelectedCourseId(courseId);
+        setIsModalOpen(true);
+      };
+      
+      const handleCloseModal = () => {
+        setIsModalOpen(false);
+      };
+      
+      return (
+        <div className="container mx-auto">
+          <div className="card p-6 mb-8">
+            <h1 className="text-2xl font-bold mb-6">Course Catalog</h1>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {mockCourses.map((course) => (
+                <CourseCard 
+                  key={course.id} 
+                  course={course} 
+                  onOpenModal={handleOpenModal} 
+                />
+              ))}
+            </div>
+          </div>
+          
+          <CourseDetailModal 
+            isOpen={isModalOpen} 
+            onClose={handleCloseModal} 
+            courseId={selectedCourseId} 
+          />
+        </div>
+      );
+    };
+    
+    // MyLearning Component
+    const MyLearning = () => {
+      const [activeTab, setActiveTab] = React.useState("in-progress");
+      const [selectedCourseId, setSelectedCourseId] = React.useState(null);
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
+      
+      const inProgressCourses = mockCourses.filter(course => 
+        course.progress > 0 && course.progress < 100
+      );
+      
+      const completedCourses = mockCourses.filter(course => 
+        course.progress === 100
+      );
+      
+      const handleOpenModal = (courseId) => {
+        setSelectedCourseId(courseId);
+        setIsModalOpen(true);
+      };
+      
+      const handleCloseModal = () => {
+        setIsModalOpen(false);
+      };
+      
+      return (
+        <div className="container mx-auto">
+          <div className="card p-6 mb-8">
+            <h1 className="text-2xl font-bold mb-6">My Learning</h1>
+            
+            <div className="mb-4">
+              <div className="border-b">
+                <div className="flex">
+                  <button 
+                    className={`py-2 px-4 font-medium ${activeTab === 'in-progress' ? 'border-b-2 border-[#d6bcfa] text-[#d6bcfa]' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('in-progress')}
+                  >
+                    In Progress
+                  </button>
+                  <button 
+                    className={`py-2 px-4 font-medium ${activeTab === 'completed' ? 'border-b-2 border-[#d6bcfa] text-[#d6bcfa]' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('completed')}
+                  >
+                    Completed
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            {activeTab === 'in-progress' ? (
+              inProgressCourses.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {inProgressCourses.map((course) => (
+                    <CourseCard 
+                      key={course.id} 
+                      course={course} 
+                      onOpenModal={handleOpenModal} 
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-lg text-gray-600">You don't have any courses in progress.</p>
+                </div>
+              )
+            ) : (
+              completedCourses.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {completedCourses.map((course) => (
+                    <CourseCard 
+                      key={course.id} 
+                      course={course} 
+                      onOpenModal={handleOpenModal} 
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-lg text-gray-600">You haven't completed any courses yet.</p>
+                </div>
+              )
+            )}
+          </div>
+          
+          <CourseDetailModal 
+            isOpen={isModalOpen} 
+            onClose={handleCloseModal} 
+            courseId={selectedCourseId} 
+          />
+        </div>
+      );
+    };
+    
+    // Welcome Page Component for Guest users
+    const WelcomePage = () => {
+      const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
+      
+      return (
+        <div className="container mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-12 py-12">
+            <div className="lg:w-1/2">
+              <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-[#90cdf4] to-[#d6bcfa] bg-clip-text text-transparent">
+                Welcome to SkillBoost
+              </h1>
+              <p className="text-xl text-gray-600 mb-8">
+                Your personalized learning platform with intelligent course recommendations and skills tracking.
+              </p>
+              <button 
+                className="btn btn-primary text-lg px-6 py-3"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
+                Get Started
+              </button>
+            </div>
+            
+            <div className="lg:w-1/2">
+              <div className="bg-white p-6 rounded-xl shadow-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="text-[#90cdf4] mb-2">
+                      <BookOpenIcon />
+                    </div>
+                    <h3 className="font-bold mb-2">Personalized Learning</h3>
+                    <p className="text-gray-600">Courses tailored to your role, skills, and career goals.</p>
+                  </div>
+                  
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <div className="text-[#d6bcfa] mb-2">
+                      <CheckIcon />
+                    </div>
+                    <h3 className="font-bold mb-2">Skills Tracking</h3>
+                    <p className="text-gray-600">Visualize your progress and identify areas for improvement.</p>
+                  </div>
+                  
+                  <div className="bg-pink-50 p-4 rounded-lg">
+                    <div className="text-[#f8b4d9] mb-2">
+                      <GraduationCapIcon />
+                    </div>
+                    <h3 className="font-bold mb-2">Expert-Led Courses</h3>
+                    <p className="text-gray-600">Learn from industry leaders and gain practical skills.</p>
+                  </div>
+                  
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <div className="text-[#9ae6b4] mb-2">
+                      <UserIcon />
+                    </div>
+                    <h3 className="font-bold mb-2">Career Advancement</h3>
+                    <p className="text-gray-600">Develop skills that help you reach your professional goals.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <AuthModal 
+            isOpen={isAuthModalOpen} 
+            onClose={() => setIsAuthModalOpen(false)}
+          />
+        </div>
+      );
+    };
+    
+    // NotFound Component
+    const NotFound = () => {
+      return (
+        <div className="container mx-auto py-20 text-center">
+          <h1 className="text-4xl font-bold mb-4">404 - Page Not Found</h1>
+          <p className="text-xl text-gray-600 mb-8">
+            The page you're looking for doesn't exist or has been moved.
+          </p>
+          <button 
+            className="btn btn-primary"
+            onClick={() => window.location.hash = '/'}
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      );
+    };
+    
+    // AppLayout Component
+    const AppLayout = ({ children }) => {
+      const isMobile = useIsMobile();
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+      const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
+      
+      const { currentUser, logout } = useAuth();
+      const { addToast } = useToast();
+      
+      const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+      };
+      
+      const handleLogout = () => {
+        logout();
+        addToast('success', 'Logged out successfully');
+        window.location.hash = '/';
+      };
+      
+      // Simple hash-based routing
+      const currentPath = window.location.hash.slice(1) || '/';
+      
+      return (
+        <div className="app-container">
+          <div className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
+            <div className="sidebar-header">
+              <h2 className="sidebar-title">SkillBoost</h2>
+            </div>
+            
+            <nav className="sidebar-nav">
+              <a href="#/" className={`nav-item ${currentPath === '/' ? 'active' : ''}`}>
+                <HomeIcon />
+                <span>Dashboard</span>
+              </a>
+              
+              <a href="#/my-learning" className={`nav-item ${currentPath === '/my-learning' ? 'active' : ''}`}>
+                <BookOpenIcon />
+                <span>My Learning</span>
+              </a>
+              
+              <a href="#/courses" className={`nav-item ${currentPath === '/courses' ? 'active' : ''}`}>
+                <GraduationCapIcon />
+                <span>Courses</span>
+              </a>
+              
+              <a href="#/profile" className={`nav-item ${currentPath === '/profile' ? 'active' : ''}`}>
+                <UserIcon />
+                <span>Profile</span>
+              </a>
+              
+              {currentUser ? (
+                <button 
+                  className="nav-item w-full text-left"
+                  onClick={handleLogout}
+                >
+                  <LogoutIcon />
+                  <span>Logout</span>
+                </button>
+              ) : (
+                <button 
+                  className="nav-item w-full text-left"
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
+                  <LoginIcon />
+                  <span>Login</span>
+                </button>
+              )}
+            </nav>
+          </div>
+          
+          <div className="main-content">
+            <header className="header">
+              {isMobile && (
+                <button 
+                  className="menu-button text-gray-500"
+                  onClick={toggleMobileMenu}
+                >
+                  <MenuIcon />
+                </button>
+              )}
+              
+              <div className="ml-auto flex items-center gap-4">
+                {currentUser ? (
+                  <>
+                    <div className="hidden md:flex items-center">
+                      <span className="mr-4 text-gray-600">Hello, {currentUser.name}</span>
+                      <button 
+                        className="btn btn-secondary text-sm"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#f8b4d9] to-[#d6bcfa] flex items-center justify-center text-white text-xs font-bold">
+                      {currentUser.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  </>
+                ) : (
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => setIsAuthModalOpen(true)}
+                  >
+                    Login / Signup
+                  </button>
+                )}
+              </div>
+            </header>
+            
+            <main className="content fade-in">
+              {children}
+            </main>
+          </div>
+          
+          {isMobileMenuOpen && isMobile && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-10"
+              onClick={toggleMobileMenu}
+            ></div>
+          )}
+          
+          <AuthModal 
+            isOpen={isAuthModalOpen} 
+            onClose={() => setIsAuthModalOpen(false)}
+          />
+        </div>
+      );
+    };
+    
+    // Main App Component with Authentication and Routing
+    const App = () => {
+      const [, setLocation] = React.useState(window.location.hash.slice(1) || '/');
+      
+      React.useEffect(() => {
+        const handleHashChange = () => {
+          setLocation(window.location.hash.slice(1) || '/');
+        };
+        
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+      }, []);
+      
+      return (
+        <ToastProvider>
+          <AuthProvider>
+            <AppWithAuth />
+          </AuthProvider>
+        </ToastProvider>
+      );
+    };
+    
+    // App with Authentication Logic
+    const AppWithAuth = () => {
+      const { currentUser, isLoading } = useAuth();
+      
+      const renderPage = () => {
+        if (isLoading) {
+          return (
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-[#d6bcfa] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            </div>
+          );
+        }
+        
+        const path = window.location.hash.slice(1) || '/';
+        
+        // Guest users can only access welcome page
+        if (!currentUser) {
+          return <WelcomePage />;
+        }
+        
+        // Authenticated users get full access
+        switch (path) {
+          case '/':
+            return <Dashboard />;
+          case '/my-learning':
+            return <MyLearning />;
+          case '/courses':
+            return <Courses />;
+          case '/profile':
+            return <Profile />;
+          default:
+            return <NotFound />;
+        }
+      };
+      
+      return (
+        <AppLayout>
+          {renderPage()}
+        </AppLayout>
+      );
+    };
+    
+    // Render the app
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
