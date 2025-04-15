@@ -2,7 +2,7 @@
 A simple, interactive web platform designed to help users learn new skills and track their progress effectively.
 
 
-**#How does it look? (ScreenShots)**
+**##How does it look? (ScreenShots)**
 ![Image](https://github.com/user-attachments/assets/5253ce72-3d45-4389-870a-815ab675d68f)
 ![Image](https://github.com/user-attachments/assets/7269b4fc-db9b-4303-988c-5e3f7b0f64b5)
 ![Image](https://github.com/user-attachments/assets/7507ead4-23b5-44d8-afef-7a86cdb26f3e)
