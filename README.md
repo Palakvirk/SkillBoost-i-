@@ -22,7 +22,7 @@ Whether you're picking up a new hobby or brushing up on professional skills, Ski
 
 **Frontend:**
 - HTML
-- CSS (optional)
+- CSS 
 - JavaScript
 
 **Backend:**
